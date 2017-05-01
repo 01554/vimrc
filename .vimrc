@@ -1,3 +1,6 @@
+" vim-python-jedi で動作することを確認しています
+"  sudo apt-get install vim-python-jedi
+"
 " Note: Skip initialization for vim-tiny or vim-small.
  if 0 | endif
 
@@ -20,7 +23,17 @@
  " My Bundles here:
  " Refer to |:NeoBundle-examples|.
  " Note: You don't set neobundle setting in .gvimrc!
- NeoBundle 'scrooloose/syntastic'
+ " NeoBundle 'scrooloose/syntastic'
+ 
+ " Lint
+ NeoBundle 'Flake8-vim'
+ 
+
+ " インデントに色を付けて見やすくする
+ NeoBundle 'nathanaelkane/vim-indent-guides'
+ "
+ " " vimを立ち上げたときに、自動的にvim-indent-guidesをオンにする
+
 
  call neobundle#end()
 
@@ -32,6 +45,8 @@
  NeoBundleCheck
 
 
+" autopep8 の設定
+" http://ton-up.net/technote/2013/11/26/vim-python-style-check-and-fix/
 " original http://stackoverflow.com/questions/12374200/using-uncrustify-with-vim/15513829#15513829
 function! Preserve(command)
     " Save the last search.
@@ -54,15 +69,32 @@ function! Preserve(command)
 endfunction
 
 function! Autopep8()
-    call Preserve(':silent %!autopep8 -')
+    call Preserve(':silent %!autopep8 --ignore=E501  -')
 endfunction
 
 
 " Shift + F で Pythonコードのインデントとか 自動修正
 autocmd FileType python nnoremap <S-f> :call Autopep8()<CR>
 
+" let g:syntastic_python_checkers = ['flake8', 'pep8']
+
+" vim-indent-guides
+" Vim 起動時 vim-indent-guides を自動起動
+let g:indent_guides_enable_on_vim_startup=1
+" ガイドをスタートするインデントの量
+let g:indent_guides_start_level=1
+" 自動カラー無効
+let g:indent_guides_auto_colors=0
+" 奇数番目のインデントの色
+autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  guibg=#444433 ctermbg=black
+" 偶数番目のインデントの色
+autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg=#333344 ctermbg=darkgray
+" ガイドの幅
+let g:indent_guides_guide_size = 4
+
 " F5で実行
 nmap <F5> :!python %
+nmap <F2> :!sh ../sh/lambdaUp.sh
 
 
 
@@ -98,7 +130,6 @@ set showmatch           " 対応する括弧などをハイライト表示する
 set matchtime=3         " 対応括弧のハイライト表示を3秒にする
 set backspace=indent,eol,start "  バックスペースでなんでも消せるようにする
 set expandtab
-set tabstop=2
-set shiftwidth=2
+set tabstop=4
+set shiftwidth=4
 colorscheme elflord
-
